@@ -1,0 +1,95 @@
+import React from 'react';
+import { Metadata } from 'next';
+import { MOCK_PRODUCTS, Product } from '@/data/products'; // தற்காலிகத் தரவை இறக்குமதி செய்கிறோம்
+
+// பக்கத்திற்கான தலைப்பு மற்றும் மெட்டா விவரங்கள்
+export const metadata: Metadata = {
+  title: "மீன் வகைகள் மற்றும் கடல் உணவுகள் | எமனேரி மீனவன்",
+  description: "இன்று கிடைக்கும் அனைத்து வகையான புதிய மீன், நண்டு மற்றும் பிற கடல் உணவுகளின் பட்டியல்.",
+};
+
+// API அழைக்கத் தேவையில்லை. நேரடியாகத் தரவைப் பெறலாம்.
+async function getAllProductsMock(): Promise<Product[]> {
+  await new Promise(resolve => setTimeout(resolve, 500)); 
+  return MOCK_PRODUCTS;
+}
+
+// ஒரு தனித் தயாரிப்பைக் காண்பிப்பதற்கான கூறு
+const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
+    return (
+        <div className="border rounded-xl shadow-lg overflow-hidden bg-white transition transform hover:scale-[1.02] hover:shadow-2xl">
+            <img 
+              src={product.imageUrl} 
+              alt={product.nameTamil} 
+              className="w-full h-56 object-cover" // அட்டையின் உயரத்தை சற்று அதிகரித்துள்ளோம்
+            />
+            <div className="p-5">
+                <span className="text-xs font-semibold px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+                    {product.category}
+                </span>
+                <h3 className="text-2xl font-bold text-orange-600 mt-2">{product.nameTamil}</h3>
+                
+                <p className="text-xl font-mono text-green-600 mt-1 mb-3">
+                    ₹{product.pricePerKg.toFixed(2)} / கி.கி
+                </p>
+                
+                <p className="text-sm text-gray-500 line-clamp-3 mb-4">
+                    {product.description}
+                </p>
+                
+                <button className="w-full bg-orange-500 text-white py-2 rounded-lg font-semibold hover:bg-orange-600 transition duration-300">
+                    வண்டியில் சேர்க்க (Buy)
+                </button>
+            </div>
+        </div>
+    );
+};
+
+
+export default async function ProductsPage() {
+  const products = await getAllProductsMock();
+
+  return (
+    <main className="container mx-auto p-4 md:p-8">
+      
+      {/* தலைப்புப் பகுதி */}
+      <header className="text-center py-10 mb-10 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-xl shadow-lg">
+        <h1 className="text-4xl font-extrabold text-blue-800">
+          🎣 மொத்த மீன் வகைகள்
+        </h1>
+        <p className="text-lg mt-2 text-gray-700">
+          நேரடியாகக் கடற்கரையில் இருந்து கிடைக்கும் அனைத்துப் புதிய கடல் உணவுகளையும் ஆராயுங்கள்.
+        </p>
+      </header>
+
+      {/* வடிகட்டி மற்றும் வரிசைப்படுத்துதல் (Placeholder) */}
+      <section className="mb-8 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+        <h2 className="text-xl font-semibold text-gray-700">வகை வாரியாக வடிகட்டவும்:</h2>
+        <div className="flex flex-wrap gap-3 mt-3">
+            <span className="px-4 py-2 bg-orange-500 text-white rounded-full cursor-pointer shadow-md">அனைத்தும்</span>
+            <span className="px-4 py-2 bg-white text-gray-800 rounded-full border cursor-pointer hover:bg-gray-100">மீன்</span>
+            <span className="px-4 py-2 bg-white text-gray-800 rounded-full border cursor-pointer hover:bg-gray-100">நண்டு</span>
+            <span className="px-4 py-2 bg-white text-gray-800 rounded-full border cursor-pointer hover:bg-gray-100">இறால்</span>
+        </div>
+      </section>
+
+      {/* தயாரிப்புப் பட்டியல் */}
+      <section>
+        <h2 className="text-3xl font-semibold mb-6 border-b pb-2 text-blue-700">
+            கிடைக்கும் பொருட்கள் ({products.length})
+        </h2>
+        
+        {products.length === 0 ? (
+          <p className="text-xl text-gray-500 text-center p-10">இன்று மீன் வரத்து இல்லை. விரைவில் புதுப்பிக்கப்படும்.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {/* ஒவ்வொரு தயாரிப்புக்கும் ஒரு கார்டு உருவாக்குதல் */}
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
+  );
+}

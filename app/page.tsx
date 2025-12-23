@@ -1,65 +1,62 @@
-import Image from "next/image";
+import React from 'react';
+import { MOCK_PRODUCTS, Product } from '@/data/products'; // தற்காலிகத் தரவை இறக்குமதி செய்கிறோம்
+import CreateOrderForm from '@/components/CreateOrderForm'; // உங்கள் ஃபார்ம்
 
-export default function Home() {
+// API அழைக்கத் தேவையில்லை. நேரடியாகத் தரவைப் பெறலாம்.
+async function getProductsMock(): Promise<Product[]> {
+  // வேண்டுமென்றால், லோடிங் விளைவைக் காட்ட ஒரு சிறிய தாமதத்தை (delay) சேர்க்கலாம்.
+  await new Promise(resolve => setTimeout(resolve, 500)); 
+  return MOCK_PRODUCTS;
+}
+
+export default async function HomePage() {
+  const products = await getProductsMock();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="container mx-auto p-4">
+      {/* ... (Header Section) */}
+      <header className="py-8 text-center bg-blue-500 text-white rounded-lg mb-8">
+        <h1 className="text-4xl font-bold">🐟 இன்றைய புதிய மீன்கள்</h1>
+        <p className="text-xl mt-2">நேரடியாகக் கடலில் இருந்து உங்கள் வீட்டிற்கு!</p>
+      </header>
+      
+      {/* ... (Products Section) */}
+      <section>
+        <h2 className="text-3xl font-semibold mb-6 border-b pb-2">மீன் வகைகள் ({products.length})</h2>
+        
+        
+        {products.length === 0 ? (
+          <p className="text-xl text-gray-500">இன்று மீன் வரத்து இல்லை.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* ஒவ்வொரு தயாரிப்புக்கும் ஒரு கார்டு உருவாக்குதல் */}
+            {products.map((product) => (
+              <div key={product.id} className="border rounded-lg shadow-lg overflow-hidden transition transform hover:scale-[1.02]">
+                <img 
+                  src={product.imageUrl} 
+                  alt={product.nameTamil} 
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-2xl font-bold text-blue-700">{product.nameTamil}</h3>
+                  <p className="text-gray-600 mb-2">{product.category}</p>
+                  <p className="text-lg font-mono text-green-600">₹{product.pricePerKg.toFixed(2)} / கி.கி</p>
+                  <p className="text-sm text-gray-500 mt-2 line-clamp-2">{product.description}</p>
+                  <button className="mt-4 w-full bg-orange-500 text-white py-2 rounded hover:bg-orange-600 transition duration-300">
+                    வண்டியில் சேர்க்க
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* ... (Order Form Section) */}
+      <section className="my-12">
+        <h2 className="text-3xl font-semibold mb-6 text-center border-b pb-2">ஆர்டர் செய்து மகிழுங்கள்</h2>
+        <CreateOrderForm /> 
+      </section>
+    </main>
   );
 }

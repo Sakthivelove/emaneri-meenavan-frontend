@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".", // Next.js பொதுவாக இதை "." என்று அமைக்கும்
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -19,7 +20,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      // இதுவே முக்கியம்: @/ என்பது ./src/ கோப்புறையில் இருந்து ஆரம்பிக்கிறதா?
+      "@/*": ["./src/*"]
     }
   },
   "include": [
