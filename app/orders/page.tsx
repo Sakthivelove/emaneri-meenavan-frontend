@@ -3,8 +3,8 @@ import { Metadata } from 'next';
 import { Order, OrderStatus, getOrdersMock } from '@/data/orders';
 
 export const metadata: Metadata = {
-  title: "எனது ஆர்டர்கள் | எமனேரி மீனவன்",
-  description: "உங்கள் ஆர்டரின் நிலை மற்றும் விவரங்களைப் பார்க்கவும்.",
+    title: "எனது ஆர்டர்கள் | எமனேரி மீனவன்",
+    description: "உங்கள் ஆர்டரின் நிலை மற்றும் விவரங்களைப் பார்க்கவும்.",
 };
 
 // ஆர்டர் நிலைக்கு வண்ணங்களைத் தீர்மானிக்கும் செயல்பாடு
@@ -25,6 +25,24 @@ const getStatusColor = (status: OrderStatus) => {
     }
 };
 
+// ஆர்டர் நிலையின் தமிழ்ப் பெயரைத் தீர்மானிக்கும் செயல்பாடு (புதியது)
+const getStatusNameTamil = (status: OrderStatus): string => {
+    switch (status) {
+        case 'DELIVERED':
+            return 'டெலிவரி செய்யப்பட்டது';
+        case 'SHIPPED':
+            return 'அனுப்பி வைக்கப்பட்டது';
+        case 'PROCESSING':
+            return 'செயலாக்கத்தில் உள்ளது';
+        case 'NEW':
+            return 'புதிய ஆர்டர்';
+        case 'CANCELLED':
+            return 'ரத்து செய்யப்பட்டது';
+        default:
+            return 'தெரியாத நிலை';
+    }
+};
+
 // ஒரு தனி ஆர்டரைக் காண்பிப்பதற்கான கூறு
 const OrderCard: React.FC<{ order: Order }> = ({ order }) => {
     const date = new Date(order.date).toLocaleDateString('ta-IN', {
@@ -33,8 +51,9 @@ const OrderCard: React.FC<{ order: Order }> = ({ order }) => {
         day: 'numeric',
     });
     
-    // நிலைக்கு ஏற்ற வண்ணம்
+    // நிலைக்கு ஏற்ற வண்ணம் மற்றும் தமிழ்ப் பெயரைப் பெறுகிறோம்
     const statusClasses = getStatusColor(order.status);
+    const statusTamil = getStatusNameTamil(order.status);
 
     return (
         <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition duration-300">
@@ -42,7 +61,7 @@ const OrderCard: React.FC<{ order: Order }> = ({ order }) => {
             <div className="flex justify-between items-start mb-4 border-b pb-3">
                 <h3 className="text-xl font-bold text-blue-700">ஆர்டர் #{order.id}</h3>
                 <span className={`px-3 py-1 text-sm font-semibold rounded-full border ${statusClasses}`}>
-                    {order.status}
+                    {statusTamil} {/* தமிழ்ப் பெயரைப் பயன்படுத்துதல் */}
                 </span>
             </div>
 
@@ -68,6 +87,7 @@ const OrderCard: React.FC<{ order: Order }> = ({ order }) => {
             
             {/* கூடுதல் செயல்பாடு */}
             <div className="mt-6 text-right">
+                {/* இங்கே ஆர்டர் விவரப் பக்கத்திற்கான இணைப்பு வரும், தற்காலிகமாக ஒரு பட்டன் உள்ளது */}
                 <button className="text-orange-600 font-medium hover:text-orange-800 transition duration-300">
                     ஆர்டர் விவரங்களைப் பார்க்கவும்
                 </button>
